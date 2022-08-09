@@ -6,7 +6,7 @@ def read_html():
 
 
 html = read_html()
-elements = html.select("h5.card-title")
+elements = html.select("h5.card-title.text-center")
 with open("output", "w", encoding = "utf-8") as output:
     output.truncate(0)
     output.writelines("%s\n" % element.text for element in elements)
