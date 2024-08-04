@@ -9,9 +9,9 @@ def get_band(element, filter = lambda : True):
     band = base_element.contents[0].text.strip()
     info = base_element.contents[1].text.strip()
     if filter(info):
-        return band
+        return (band, info)
     else:
-        return ""
+        return None
 
 def unique(list):
     set = []
@@ -22,18 +22,24 @@ def unique(list):
 
 nonsense = ["TBA"]
 def not_nonsense(band):
-    return band not in nonsense
+    return band[0] not in nonsense
 
 def is_metal_battle(info):
     return info.startswith("MB")
 
+def concat_band_info(band):
+    if (band[1] != ""):
+        return band[0] + " (" + band[1] + ")" + "\n"
+    else:
+        return band[0] + "\n"
+
 def write_bands(elements, band_filter, filename):
     bands = [get_band(element, band_filter) for element in elements]
-    bands = unique(bands)
-    bands = sorted(bands)
     bands = filter(None, bands)
+    bands = unique(bands)
+    bands = sorted(bands, key=lambda band: band[1])
     bands = filter(not_nonsense, bands)
-    bands = map(lambda band : band + "\n", bands)
+    bands = map(concat_band_info, bands)
     with open(filename, "w", encoding = "utf-8") as output:
         output.truncate(0)
         output.writelines(list(bands))
